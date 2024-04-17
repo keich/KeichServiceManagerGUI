@@ -9,6 +9,7 @@
 	import Column from 'primevue/column'
 	import Dialog from 'primevue/dialog'
 	import InlineMessage from 'primevue/inlinemessage'
+	import StatusIcon from '@/components/StatusIcon.vue'
 	import { getCSSColorByStatus, objectToNode, getIntByStatus, getInlineMessageSeverityByStatus } from '@/common/func.ts'
 	
 	const toast = useToast()
@@ -138,7 +139,7 @@
         </Column>
         <Column field="status" header="Status" class="w-2 p-0 pl-1" headerClass="p-2">
             <template #body="slotProps">
-            	<InlineMessage  class="p-1 m-1" :severity="getInlineMessageSeverityByStatus(slotProps.node.data.status)"/>
+            	<StatusIcon :status="slotProps.node.data.status" />
             </template>
         </Column>
     </TreeTable>
