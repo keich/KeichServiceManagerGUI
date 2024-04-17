@@ -20,24 +20,11 @@
 	
 	const emit = defineEmits(['itemSelectedId'])
 	
-	/*interface INode {
-		key: string
-		data: IItem
-		name: string
-		status: string
-		leaf: boolean
-		intStatus: number
-		children: INode[]
-	}*/
-	
 	function itemToNode(item: IItem): TreeNode {
 		return {
 			key: item.id,
 			data: item,
-			//name: item.fields.name,
-			//status: item.status,
 			leaf: !item.hasChildren,
-			//intStatus: getIntByStatus(item.status),
 			children: []
 		}
 	}
@@ -143,7 +130,7 @@
         </Column>
     </TreeTable>
 	<Dialog v-model:visible="isShowDialog"  :header="headerDialog" :style="{ width: '70vw' }">
-        <TreeTable :value="dataDialog">
+        <TreeTable :value="dataDialog" class="itemDetails">
             <Column field="name" header="Field" expander></Column>
             <Column field="value" header="Value"></Column>
         </TreeTable>
@@ -156,5 +143,10 @@
     white-space: initial;
     display: inline;
 }
+
+.itemDetails .p-treetable-tbody > tr > td  {
+    padding: 0 0;
+}
+
 
 </style>

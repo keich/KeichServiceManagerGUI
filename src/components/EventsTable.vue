@@ -19,19 +19,6 @@
 	
 	
 	dayjs.extend(relativeTime)
-/*
-	interface INode {
-		key: string
-		data: IEvent
-		node: string
-		summary: string
-		status: string
-		intStatus: number
-		toNow: string
-		createdOnObj: Dayjs
-	}
-*/
-	
 	
 	const props = defineProps({
 	    id: {type: String, required: true },
@@ -56,16 +43,9 @@
 	
 
 	function eventToNode(event: IEvent): TreeNode {
-		//const created = dayjs(event.createdOn);
 		return {
 			key: event.id,
 			data: event,
-			//node: event.fields.node,
-			//summary: event.fields.summary,
-			//status: event.status,
-			//intStatus: getIntByStatus(event.status),
-			//createdOnObj: created,
-			//toNow: created.toNow()
 		}
 	}
 	
@@ -94,36 +74,17 @@
 	
 	onMounted(() => {
 		refreshEventsInterval = setInterval(() => loadEvents(props.id), 60000)
-	});
+	})
 	
 	onBeforeUnmount(() => {
 		clearInterval(refreshEventsInterval)
-	});
+	})
 	
 	watch(props, () => {
 		loadEvents(props.id)
 		clearInterval(refreshEventsInterval);
 		refreshEventsInterval = setInterval(() => loadEvents(props.id), 60000)
 	})
-
-/*	function objectToNode(event: IEvent): TreeTable[] {
-	if(!event){
-		return [];
-	}
-    const out = [];
-    for(const [field, value] of Object.entries(event)){
-        if(typeof value === 'object'){
-			if(value == null){
-				out.push({key:field, data: {name: field, value: "NULL"}, children: []});
-			} else {
-				out.push({key:field, data: {name: field, value: ""}, children: objectToNode(value)});
-			}
-        }else{
-            out.push({key:field, data: {name: field, value: value}});
-        }
-    }
-    return out;
-}	*/
 	
 	function onNodeSelect(node: TreeNode) {
 	    if(isShowDialog){
@@ -152,7 +113,7 @@
 	    </Column>
 	</DataTable>
 	<Dialog v-model:visible="isShowDialog"  :header="headerDialog" :style="{ width: '70vw' }">
-        <TreeTable :value="dataDialog">
+        <TreeTable :value="dataDialog" class="eventDetails">
             <Column field="name" header="Field" expander></Column>
             <Column field="value" header="Value"></Column>
         </TreeTable>
@@ -164,6 +125,10 @@
 .columnName {
     white-space: initial;
     display: inline;
+}
+
+.eventDetails .p-treetable-tbody > tr > td  {
+    padding: 0 0;
 }
 
 </style>
