@@ -108,7 +108,7 @@
 </script>
 
 <template>
-  	<DataTable :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" >
+  	<DataTable class="eventTable" paginator :rows="50" :rowsPerPageOptions="[50, 100, 1000]" :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" >
 		<Column v-for="col of columns"  :key="col.field" :field="col.field" :header="col.header" :class="col.class" headerClass="p-2" style="word-wrap: break-word">
 			<template  v-if="col.field == 'data.status'" #body="slotProps">
 				<StatusIcon :status="slotProps.data.data.status" />
@@ -132,6 +132,17 @@
 
 .eventDetails .p-treetable-tbody > tr > td  {
     padding: 0 0;
+}
+
+.eventTable {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.p-datatable-wrapper  {
+	height: 100vh;
 }
 
 </style>

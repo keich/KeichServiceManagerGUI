@@ -30,7 +30,7 @@
 	    <SplitterPanel class="h-screen overflow-y-scroll" :size="30" :minSize="10">
 	        <ItemsTree :itemId=props.itemId @itemSelectedId="itemSelected"></ItemsTree>
 		</SplitterPanel>
-	    <SplitterPanel class="h-screen overflow-y-scroll" :size="70">
+	    <SplitterPanel class="h-screen overflow-hidden" :size="70">
     		<EventsTable :id="itemSelectedId"/>
 	    </SplitterPanel>
 	</Splitter>
