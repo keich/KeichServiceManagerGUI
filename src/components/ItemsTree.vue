@@ -1,14 +1,24 @@
 <script setup lang="ts">
-	import { shallowRef, ref, onMounted, onBeforeUnmount, watch } from 'vue'
+	import { shallowRef, ref, onMounted, onBeforeUnmount, watch, defineProps } from 'vue'
 	import type { IItem } from "@/types/IItem.ts"
 	import type { TreeNode }  from 'primevue/treenode'
 	import ItemRepository from '@/api/ItemRepository.ts'
 	import TreeTable from 'primevue/treetable'
 	import { useToast } from "primevue/usetoast"
+	import Toast from 'primevue/toast';
 	import Column from 'primevue/column'
 	import Dialog from 'primevue/dialog'
 	import InlineMessage from 'primevue/inlinemessage'
 	import { getCSSColorByStatus, objectToNode, getIntByStatus, getInlineMessageSeverityByStatus } from '@/common/func.ts'
+	
+	const toast = useToast()
+	
+	const props = defineProps({
+		itemId: {
+			type: String,
+			required: true
+		}
+	})
 	
 	const dataTree = ref<TreeNode[]>([])
 	const loading = ref(true)
@@ -16,7 +26,7 @@
 	const headerDialog = ref<string>()
 	const dataDialog = ref<TreeNode[]>()
 	
-	const intervals: Record<string, TreeNode> = {};
+	const intervals: Record<string, TreeNode> = {}
 	
 	const emit = defineEmits(['itemSelectedId'])
 	
@@ -31,12 +41,13 @@
 	
 	function loadRootItem() {
 		loading.value = true
-		ItemRepository.getItem('1')
+		ItemRepository.getItem(props.itemId)
 		.then(item => { dataTree.value = [itemToNode(item)] })
 		.catch(error => { 
-			console.log("Error ",error);
+			console.log("Error ",error)
+			toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get: ' + error, life: 30000 })
 		})
-		loading.value = false;
+		loading.value = false
 	}
 	
 	function loadChildren(parent: TreeNode) {
@@ -59,6 +70,7 @@
 		})
 		.catch(error => { 
 			console.log("Error ",error)
+			toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get/children: ' + error, life: 30000 })
 		})
 		loading.value = false
 	}
@@ -84,7 +96,7 @@
 	    	intervals[node.key] = { 
 	    		timer: setInterval(() => loadChildren(node), 60000) ,
 	    		origNode: node
-	    	};
+	    	}
 	    }
 	}
 
@@ -107,16 +119,17 @@
 	
 	onMounted(() => {
 		loadRootItem()
-	});
+	})
 	
 	onBeforeUnmount(() => {
 		clearTimer(dataTree)
 		dataTree.value = []
-	});
+	})
 
 </script>
 
 <template>
+    <Toast />
     <TreeTable :value="dataTree" :lazy="true" :paginator="false" @nodeExpand="onExpand" @nodeCollapse="onCollapse"  selectionMode="single" @nodeSelect="onNodeSelect"  @dblclick="onRowDblClick" :loading="loading" >
         <Column field="name" header="Name" expander rowClass="reorderableColumn" class="p-0  pl-1" headerClass="p-2">
             <template #body="slotProps">

@@ -10,6 +10,12 @@ const router = createRouter({
       name: 'tree',
       component: ServicesTree
     },
+	{
+      path: '/:itemId',
+      name: 'treeWithId',
+      props: true,
+      component: ServicesTree
+    },
     {
       path: '/home',
       name: 'home',

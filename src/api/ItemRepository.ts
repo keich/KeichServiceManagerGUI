@@ -38,7 +38,7 @@ function getChildren(id: String): Promise<IItem[]> {
 	return fetch(host + '/item/' + id + '/children')
 	.then(response => {
 		if(!response.ok){
-			throw new Error(response.statusText)
+			throw new Error(response.status)
 		}
 		return response.json()
 	})
@@ -54,7 +54,7 @@ function getItem(id: String): Promise<IItem> {
 	return fetch(host + '/item/' + id)
 	.then(response => {
 		if(!response.ok){
-			throw new Error(response.statusText)
+			throw new Error(response.status)
 		}
 		return response.json()
 	})

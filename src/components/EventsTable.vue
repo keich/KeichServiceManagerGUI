@@ -17,6 +17,7 @@
 	import ScrollPanel from 'primevue/scrollpanel'
 	import { getCSSColorByStatus, objectToNode, getIntByStatus, getInlineMessageSeverityByStatus } from '@/common/func.ts'
 	
+	const toast = useToast()
 	
 	dayjs.extend(relativeTime)
 	
@@ -68,6 +69,7 @@
 		})
 		.catch(error => { 
 			console.log("Error ",error)
+			toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get/events: ' + error, life: 30000 })
 		})
 		loading.value = false
 	}
