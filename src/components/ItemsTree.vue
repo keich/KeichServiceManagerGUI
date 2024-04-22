@@ -139,7 +139,7 @@
         </Column>
         <Column field="status" header="Status" class="w-2 p-0 pl-1" headerClass="p-2">
             <template #body="slotProps">
-            	<StatusIcon :status="slotProps.node.data.status" />
+            	<StatusIcon class="w-2rem" :status="slotProps.node.data.status" />
             </template>
         </Column>
     </TreeTable>
