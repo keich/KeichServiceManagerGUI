@@ -19,7 +19,13 @@ const router = createRouter({
     },
     {
       path: '/table',
+      name: 'tableWithId',
+      component: ServicesTable
+    },
+    {
+      path: '/table/:itemId',
       name: 'table',
+       props: true,
       component: ServicesTable
     },
     {
