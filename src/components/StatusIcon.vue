@@ -15,6 +15,11 @@
 		status: {
 			type: String,
 			required: true
+		},
+		text: { 
+			type: String,
+			required: false,
+			default: ""
 		}
 	})
 
@@ -24,7 +29,7 @@ const classesConfig: IStatusHash = {
 	'INFORMATION': {'iconStyle':'color: var(--blue-500)','iconClass': 'pi-info-circle', 'backgroundClass': 'bg-blue-50'},
 	'WARNING':{'iconStyle':'color: var(--orange-600)','iconClass': 'pi-exclamation-circle', 'backgroundClass': 'bg-orange-50'},
 	'MAJOR': {'iconStyle':'color: var(--orange-600)','iconClass': 'pi-exclamation-triangle', 'backgroundClass': 'bg-orange-50'},
-	'CRITICAL': {'iconStyle':'color: var(--red-600)','iconClass': 'pi-times-circle', 'backgroundClass': 'bg-red-50'}
+	'CRITICAL': {'iconStyle':'color: var(--red-600)','iconClass': 'pi-times-circle', 'backgroundClass': 'bg-red-100'}
 }		
 	
 const statusClasses = computed<IStatus>(() => {
@@ -38,8 +43,9 @@ const statusClasses = computed<IStatus>(() => {
 </script>
 
 <template>
-	<div :class="['m-1 border-round-md flex align-items-center justify-content-center w-2rem h-2rem', statusClasses.backgroundClass]">
-		<span :class="['flex-end pi', statusClasses.iconClass]" :style="statusClasses.iconStyle"></span>
+	<div :class="['h-full border-round-md min-w-min', statusClasses.backgroundClass]">
+		<span :class="['m-2 pi', statusClasses.iconClass]" :style="statusClasses.iconStyle"></span>
+		<div class='inline' :style='statusClasses.iconStyle'>{{props.text}}</div>
 	</div>
 </template>
 
