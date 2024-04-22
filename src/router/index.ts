@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ServicesTree from '../views/ServicesTree.vue'
+import ServicesTable from '../views/ServicesTable.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,11 @@ const router = createRouter({
       name: 'treeWithId',
       props: true,
       component: ServicesTree
+    },
+    {
+      path: '/table',
+      name: 'table',
+      component: ServicesTable
     },
     {
       path: '/home',
