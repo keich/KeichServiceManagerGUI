@@ -1,8 +1,10 @@
 import type { IEvent} from "@/types/IEvent.ts"
 import type { IItem } from "@/types/IItem.ts"
 import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { getIntByStatus } from '@/common/func.ts'
 
+dayjs.extend(relativeTime)
 
 const host = import.meta.env.VITE_API_HOST
 
@@ -99,7 +101,7 @@ function getEvents(id: String): Promise<IEvent[]> {
 				status: event.status,
 				intStatus: getIntByStatus(event.status),
 				fields: event.fields,
-				toNow: created.toNow()
+				toNow: created.fromNow()
 			}
 		})
 	})
