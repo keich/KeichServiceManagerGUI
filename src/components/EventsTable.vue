@@ -12,8 +12,6 @@
 	import { useToast } from "primevue/usetoast"
 	import Column from 'primevue/column'
 	import Dialog from 'primevue/dialog'
-	import dayjs, { Dayjs } from "dayjs";
-	import relativeTime from 'dayjs/plugin/relativeTime'
 	import ScrollPanel from 'primevue/scrollpanel'
 	import StatusIcon from '@/components/StatusIcon.vue'
 	import { getCSSColorByStatus, objectToNode } from '@/common/func.ts'
@@ -21,7 +19,6 @@
 	
 	const toast = useToast()
 	
-	dayjs.extend(relativeTime)
 	
 	const props = defineProps({
 	    id: {type: String, required: true },
