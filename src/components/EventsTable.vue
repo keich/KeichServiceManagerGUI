@@ -16,7 +16,8 @@
 	import relativeTime from 'dayjs/plugin/relativeTime'
 	import ScrollPanel from 'primevue/scrollpanel'
 	import StatusIcon from '@/components/StatusIcon.vue'
-	import { getCSSColorByStatus, objectToNode, getIntByStatus } from '@/common/func.ts'
+	import { getCSSColorByStatus, objectToNode } from '@/common/func.ts'
+	import Toast from 'primevue/toast';
 	
 	const toast = useToast()
 	
@@ -108,6 +109,7 @@
 </script>
 
 <template>
+    <Toast />
   	<DataTable class="eventTable" paginator :rows="50" :rowsPerPageOptions="[50, 100, 1000]" :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" >
 		<Column v-for="col of columns"  :key="col.field" :field="col.field" :header="col.header" :class="col.class" headerClass="p-2" style="word-wrap: break-word">
 			<template  v-if="col.field == 'data.status'" #body="slotProps">
