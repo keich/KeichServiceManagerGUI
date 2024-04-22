@@ -107,7 +107,6 @@
 
 	function onNodeSelect(node: TreeNode) {
 		emit('itemSelectedId', node.data.id)
-		console.log(node);
 	    if(isShowDialog){
 	    	headerDialog.value = node.data.fields.name
 	    	dataDialog.value = objectToNode(node.data)
