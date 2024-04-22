@@ -23,6 +23,9 @@
 		itemSelectedId.value = id;
 	}
 	
+	onMounted(() => {
+		itemSelected(props.itemId)
+	})
 </script>
 
 <template>
