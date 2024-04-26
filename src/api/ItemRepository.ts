@@ -18,6 +18,8 @@ interface inItem{
 	deletedOn: string
 	status: string
 	fields: Record<string, string>
+	rules: Record<string, string>
+	filters: Record<string, string>
 	hasChildren: boolean
 }
 
@@ -32,6 +34,8 @@ function buildItem(item: inItem): IItem{
 		status: item.status,
 		intStatus: getIntByStatus(item.status),
 		fields: item.fields,
+		rules: item.rules,
+		filters: item.filters,
 		hasChildren: item.hasChildren
 	}
 }
