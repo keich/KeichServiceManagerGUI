@@ -15,7 +15,8 @@
 	import ScrollPanel from 'primevue/scrollpanel'
 	import StatusIcon from '@/components/StatusIcon.vue'
 	import { getCSSColorByStatus, objectToNode } from '@/common/func.ts'
-	import Toast from 'primevue/toast';
+	import Toast from 'primevue/toast'
+	import { FilterMatchMode } from 'primevue/api'
 	
 	const toast = useToast()
 	
@@ -32,8 +33,14 @@
 	const headerDialog = ref<string>()
 	const dataDialog = ref<TreeNode[]>()
 	
-	let refreshEventsInterval: number
+	let refreshEventsInterval: number = null
+	
+	let searchTimer = null
 
+	const filters = ref({
+	    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+	})
+	
 	const columns  = ref([
 		{ field: 'data.status', header: 'Status', class: "white-space-normal p-1 w-1 pl-2"},
 		{ field: 'data.toNow', header: 'To Now' , class: "white-space-normal p-1 w-2 pl-2"},
@@ -102,12 +109,31 @@
 	function onRowDblClick() {
 		isShowDialog.value = true
 	}
-		
+	
+	function onFilterGlobal(event){
+	    if (searchTimer){
+	        clearTimeout(searchTimer)
+	        searchTimer = null
+	    }
+	    searchTimer = setTimeout(() => {
+	    	filters.value['global'].value = event.target.value.trim()
+	    }, 800)
+	}
 </script>
 
 <template>
     <Toast />
-  	<DataTable class="flex flex-column h-full overflow-hidden" paginator :rows="50" :rowsPerPageOptions="[50, 100, 1000]" :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" >
+  	<DataTable class="flex flex-column h-full overflow-hidden" paginator :rows="50" :rowsPerPageOptions="[50, 100, 1000]" 
+  	    :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" 
+  	    :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" v-model:filters="filters" >
+		<template #header >
+			<div class="text-right">
+				<div class="" >
+					<i class="pi pi-search m-2"></i>
+					<InputText @input="onFilterGlobal" placeholder="Global Search" class="p-1"/>
+				</div>
+			</div>
+		</template>
 		<Column v-for="col of columns"  :key="col.field" :field="col.field" :header="col.header" :class="col.class" headerClass="p-2" style="word-wrap: break-word">
 			<template  v-if="col.field == 'data.status'" #body="slotProps">
 				<StatusIcon class="w-2rem" :status="slotProps.data.data.status" />
