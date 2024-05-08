@@ -91,6 +91,7 @@
 				})
 			let tmp = getClearCounters()
 			events.value.forEach((evt) => {
+				tmp.all++
 				switch(evt.data.status){
 				case 'CLEAR':
 					tmp.clear++
