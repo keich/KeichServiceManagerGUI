@@ -188,9 +188,11 @@
   	    :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" 
   	    :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" v-model:filters="filters" >
 		<template #header>
-			<div class="align-items-center flex p-0 m-0">
-				<div v-for="button in buttons" class="cursor-pointer">
-					<StatusIcon v-if="button.show" :status="button.status" class="m-1" @click="onClickFilterStatus(button.value)" :text="button.text" />
+			<div class="align-items-center flex justify-content-between p-0 m-0">
+				<div class="flex">
+					<div v-for="button in buttons" class="cursor-pointer">
+						<StatusIcon v-if="button.show" :status="button.status" class="m-1" @click="onClickFilterStatus(button.value)" :text="button.text" />
+					</div>
 				</div>
 				<div class="flex m-1" >
 					<i class="pi pi-search m-2"></i><InputText @input="onFilterGlobal" placeholder="Global Search" class="p-1"/>
