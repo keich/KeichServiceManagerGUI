@@ -4,6 +4,7 @@
 	import type { TreeNode }  from 'primevue/treenode'
 	import ItemRepository from '@/api/ItemRepository.ts'
 	import TreeTable from 'primevue/treetable'
+	import type { TreeTableSelectionKeys } from 'primevue/treetable'
 	import { useToast } from "primevue/usetoast"
 	import Toast from 'primevue/toast';
 	import Column from 'primevue/column'
@@ -26,6 +27,7 @@
 	const isShowDialog = ref(false)
 	const headerDialog = ref<string>()
 	const dataDialog = ref<TreeNode[]>()
+	const selectedKey = ref<TreeTableSelectionKeys | undefined>(undefined);
 	
 	const intervals: Record<string, TreeNode> = {}
 	
@@ -131,7 +133,7 @@
 
 <template>
     <Toast />
-    <TreeTable :value="dataTree" :lazy="true" :paginator="false" @nodeExpand="onExpand" @nodeCollapse="onCollapse"  selectionMode="single" @nodeSelect="onNodeSelect"  @dblclick="onRowDblClick" :loading="loading" >
+    <TreeTable v-model:selectionKeys="selectedKey" :value="dataTree" :lazy="true" :paginator="false" @nodeExpand="onExpand" @nodeCollapse="onCollapse"  selectionMode="single" @nodeSelect="onNodeSelect"  @dblclick="onRowDblClick" :loading="loading" >
         <Column field="name" header="Name" expander rowClass="reorderableColumn" class="p-0  pl-1" headerClass="p-2">
             <template #body="slotProps">
                 <div class="columnName">{{ slotProps.node.data.fields.name }}</div>
