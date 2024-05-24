@@ -79,6 +79,7 @@ interface inEvent {
 	deletedOn: string
 	status: string
 	fields: Record<string, string>
+	fromHistory: string[]
 }
 
 function getEvents(id: String): Promise<IEvent[]> {
@@ -105,7 +106,8 @@ function getEvents(id: String): Promise<IEvent[]> {
 				status: event.status,
 				intStatus: getIntByStatus(event.status),
 				fields: event.fields,
-				toNow: created.fromNow()
+				toNow: created.fromNow(),
+				fromHistory: event.fromHistory
 			}
 		})
 	})

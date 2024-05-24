@@ -10,5 +10,6 @@ export interface IEvent {
 	status: string
 	fields: Record<string, string>
 	intStatus: number,
-	toNow: string
+	toNow: string,
+	fromHistory: string[]
 }
