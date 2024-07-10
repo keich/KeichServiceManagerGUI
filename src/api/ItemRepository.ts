@@ -3,6 +3,7 @@ import type { IItem } from "@/types/IItem.ts"
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { getIntByStatus } from '@/common/func.ts'
+import type { IItemTree } from "@/types/IItemTree";
 
 dayjs.extend(relativeTime)
 
@@ -40,6 +41,7 @@ function buildItem(item: inItem): IItem{
 	}
 }
 
+
 function getChildren(id: String): Promise<IItem[]> {
 	return fetch(host + '/item/' + id + '/children')
 	.then(response => {
@@ -66,6 +68,19 @@ function getItem(id: String): Promise<IItem> {
 	})
 	.then(item => {
 		return buildItem(item)
+	})
+}
+
+function getItemTree(id: String): Promise<IItemTree> {
+	return fetch(host + '/item/' + id + "/tree")
+	.then(response => {
+		if(!response.ok){
+			throw new Error('HTTP status ' + response.status)
+		}
+		return response.json()
+	})
+	.then(item => {
+		return item
 	})
 }
 
@@ -115,5 +130,5 @@ function getEvents(id: String): Promise<IEvent[]> {
 }
 	
 export default {
-	getChildren, getItem, getEvents
+	getChildren, getItem, getItemTree, getEvents
 }
