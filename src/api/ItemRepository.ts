@@ -75,10 +75,11 @@ function findItemsByName(name: String): Promise<IItem[]> {
 	if(name == '' || name == null){
 		throw new Error('Search name is emty')
 	}
-	const url = new URL(host + '/item');
-	url.searchParams.set('fields.name', 'co:' + name);
 
-	return fetch(url)
+	const queryParams = new URLSearchParams()
+	queryParams.append('fields.name', 'co:' + name)
+	
+	return fetch(host + '/item?'+queryParams)
 	.then(response => {
 		if(!response.ok){
 			throw new Error('HTTP status ' + response.status)
