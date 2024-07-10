@@ -106,7 +106,10 @@
 				console.log("Error ",error)
 				toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get: ' + error, life: 30000 })
 			})
-		} 
+		} else {
+			rootIds.value = [props.itemId]
+		}
+		
 		loading.value = false
 		refreshEventsInterval = setInterval(() => loadRootItem(), 60000)
 	}
