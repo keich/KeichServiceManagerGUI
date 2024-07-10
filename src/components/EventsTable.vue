@@ -74,6 +74,11 @@
 	}
 	
 	function loadEvents(id: string){
+		if(id == '' || id == null){
+			counters.value = getClearCounters()
+			events.value = []
+			return
+		}
 		loading.value = true
 		const t = ItemRepository.getEvents(id)
 		.then(arr => {
