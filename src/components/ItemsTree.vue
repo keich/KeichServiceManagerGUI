@@ -47,9 +47,15 @@
 	
 	function itemToNode(item: IItemTree): TreeNode {
 		item.intStatus = getIntByStatus(item.status)
-		item.createdOn = dayjs(item.createdOn)
-		item.updatedOn = dayjs(item.updatedOn)
-		item.deletedOn = dayjs(item.deletedOn)
+		if(item.createdOn != null){
+			item.createdOn = dayjs(item.createdOn)
+		}
+		if(item.updatedOn != null){
+			item.updatedOn = dayjs(item.updatedOn)
+		}
+		if(item.deletedOn != null){
+			item.deletedOn = dayjs(item.deletedOn)
+		}
 		const children = item.children
 		.map((child) => itemToNode(child))
 		.sort((a, b) => {
