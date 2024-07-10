@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { watch, ref, onMounted, onBeforeUnmount, defineProps } from 'vue'
+	import { watch, shallowRef, ref, onMounted, onBeforeUnmount, defineProps } from 'vue'
 	import type { TreeNode }  from 'primevue/treenode'
 	import ItemRepository from '@/api/ItemRepository.ts'
 	import TreeTable from 'primevue/treetable'
@@ -27,6 +27,7 @@
 		}
 	})
 	
+	const rootIds = shallowRef<string[]>([])
 	const dataTree = ref<TreeNode[]>([])
 	const loading = ref(true)
 	const isShowDialog = ref(false)
@@ -36,12 +37,9 @@
 	const selectedKey = ref<TreeTableSelectionKeys | undefined>(undefined)
 	const filters = ref({global: ''})
 	
-	watch(filters, () => {
-		console.log(filters)
-	})
-	
 	let refreshEventsInterval: number
 	let searchTimer: number | undefined = undefined
+	let searchKey: string = ""
 	
 	const emit = defineEmits(['itemSelectedId'])
 	
@@ -75,17 +73,42 @@
 		return out
 	}
 	
-	function loadRootItem() {
+	watch(rootIds,() => {
+		loadRootTree()
+	})
+	
+	function loadRootTree() {
 		loading.value = true
-		ItemRepository.getItemTree(props.itemId)
-		.then(item => { 
-			dataTree.value = [itemToNode(item)] 
+		const prom = rootIds.value.map((id) => ItemRepository.getItemTree(id))
+		
+		Promise.all(prom)
+		.then((values) => {
+  			dataTree.value = values.map(item => itemToNode(item))
 		})
 		.catch(error => { 
-			console.log("Error ",error)
-			toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get: ' + error, life: 30000 })
+				console.log("Error ",error)
+				toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get: ' + error, life: 30000 })
 		})
 		loading.value = false
+	}
+	
+	function loadRootItem() {
+		loading.value = true
+		clearInterval(refreshEventsInterval)
+		
+		if(searchKey != '' && searchKey != null){
+			ItemRepository.findItemsByName(searchKey)
+			.then(items => items.map(item => item.id))
+			.then(ids => { 
+				rootIds.value = ids.slice(0, 40)
+			})
+			.catch(error => { 
+				console.log("Error ",error)
+				toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get: ' + error, life: 30000 })
+			})
+		} 
+		loading.value = false
+		refreshEventsInterval = setInterval(() => loadRootItem(), 60000)
 	}
 
 	function onNodeSelect(node: TreeNode) {
@@ -102,8 +125,8 @@
 	}
 	
 	onMounted(() => {
+		rootIds.value = [props.itemId]
 		loadRootItem()
-		refreshEventsInterval = setInterval(() => loadRootItem(), 60000)
 	})
 	
 	onBeforeUnmount(() => {
@@ -111,20 +134,22 @@
 		dataTree.value = []
 	})
 
-	function onFilterGlobal(event: any){		
+	function onFilterGlobal(event: any){
 	    if (searchTimer){
 	        clearTimeout(searchTimer)
 	        searchTimer = undefined
 	    }
 	    searchTimer = setTimeout(() => {
-	    	filters.value['global'] = event.target.value.trim()
+	    	emit('itemSelectedId', '')
+	    	searchKey = event.target.value.trim()
+	    	loadRootItem()
 	    }, 800)
 	}
 </script>
 
 <template>
     <Toast />
-    <TreeTable v-model:selectionKeys="selectedKey" :value="dataTree" :filters="filters" selectionMode="single" @nodeSelect="onNodeSelect"  @dblclick="onRowDblClick" :loading="loading" >
+    <TreeTable v-model:selectionKeys="selectedKey" :value="dataTree" selectionMode="single" @nodeSelect="onNodeSelect"  @dblclick="onRowDblClick" :loading="loading" >
         <template #header>
         	<div class="align-items-center flex justify-content-between p-0 m-0">
         	 	<div></div>

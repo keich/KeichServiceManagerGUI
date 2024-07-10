@@ -71,6 +71,25 @@ function getItem(id: String): Promise<IItem> {
 	})
 }
 
+function findItemsByName(name: String): Promise<IItem[]> {
+	if(name == '' || name == null){
+		throw new Error('Search name is emty')
+	}
+	const url = new URL(host + '/item');
+	url.searchParams.set('fields.name', 'co:' + name);
+
+	return fetch(url)
+	.then(response => {
+		if(!response.ok){
+			throw new Error('HTTP status ' + response.status)
+		}
+		return response.json()
+	})
+	.then(items => {
+		return items;
+	})
+}
+
 function getItemTree(id: String): Promise<IItemTree> {
 	return fetch(host + '/item/' + id + "/tree")
 	.then(response => {
@@ -130,5 +149,5 @@ function getEvents(id: String): Promise<IEvent[]> {
 }
 	
 export default {
-	getChildren, getItem, getItemTree, getEvents
+	getChildren, getItem, getItemTree, getEvents, findItemsByName
 }
