@@ -27,13 +27,22 @@
 		}
 	})
 	
+	interface IDialogData {
+		loading: boolean
+		isShow: boolean
+		headerText: string
+		id: string
+		data: TreeNode[]
+	}
+	
 	const rootIds = shallowRef<string[]>([])
 	const dataTree = ref<TreeNode[]>([])
 	const loading = ref(true)
-	const isShowDialog = ref(false)
+	const dataDialog = ref<IDialogData>({loading: false, isShow: false, headerText: '', id: '', data: []})
+	/*const isShowDialog = ref(false)
 	const headerDialog = ref<string>()
-	const idDialog = ref<string>()
-	const dataDialog = ref<TreeNode[]>()
+	const idDialog = ref<string>('')
+	const dataDialog = ref<TreeNode[]>()*/
 	const selectedKey = ref<TreeTableSelectionKeys | undefined>(undefined)
 	const filters = ref({global: ''})
 	
@@ -59,7 +68,7 @@
 		.sort((a, b) => {
 				const intDiff = b.data.intStatus - a.data.intStatus
 				if(intDiff === 0){
-					return (''+a.data.fields.name).localeCompare(b.data.fields.name)
+					return (''+a.data.name).localeCompare(b.data.name)
 				}
 				return intDiff
 		})
@@ -79,7 +88,7 @@
 	
 	function loadRootTree() {
 		loading.value = true
-		const prom = rootIds.value.map((id) => ItemRepository.getItemTree(id))
+		const prom = rootIds.value.map((id) => ItemRepository.getItemTree(id, ['id', 'name','status']))
 		
 		Promise.all(prom)
 		.then((values) => {
@@ -97,7 +106,7 @@
 		clearInterval(refreshEventsInterval)
 		
 		if(searchKey != '' && searchKey != null){
-			ItemRepository.findItemsByName(searchKey)
+			ItemRepository.findItemsByName(searchKey, ['id'])
 			.then(items => items.map(item => item.id))
 			.then(ids => { 
 				rootIds.value = ids.slice(0, 40)
@@ -116,15 +125,29 @@
 
 	function onNodeSelect(node: TreeNode) {
 		emit('itemSelectedId', node.data.id)
-	    if(isShowDialog){
-	    	headerDialog.value = node.data.fields.name
-	    	dataDialog.value = objectToNode(node.data)
-	    	idDialog.value = node.data.id
+		dataDialog.value.id = node.data.id
+	    if(dataDialog.value.isShow){
+	    	showDialog()
 	    }
 	}
 
+	function showDialog() {
+		if(dataDialog.value.id != '' && dataDialog.value.id != null){
+			ItemRepository.getItem(dataDialog.value.id)
+			.then(item => {
+				dataDialog.value.headerText = item.name
+				dataDialog.value.data = objectToNode(item)
+			})
+			.catch(error => { 
+				console.log("Error ",error)
+				toast.add({ severity: 'error', summary: 'Error', detail: 'API item/get: ' + error, life: 30000 })
+			})
+		}
+		dataDialog.value.isShow = true
+	}
+	
 	function onRowDblClick() {
-		isShowDialog.value = true
+		showDialog()
 	}
 	
 	onMounted(() => {
@@ -162,9 +185,9 @@
             	</div>
             </div>
         </template>
-        <Column field="fields.name" header="Name" expander rowClass="reorderableColumn" class="p-0  pl-1" headerClass="p-2">
+        <Column field="name" header="Name" expander rowClass="reorderableColumn" class="p-0  pl-1" headerClass="p-2">
             <template #body="slotProps">
-                <div class="columnName">{{ slotProps.node.data.fields.name }}</div>
+                <div class="columnName">{{ slotProps.node.data.name }}</div>
             </template>
         </Column>
         <Column field="status" header="Status" class="w-2 p-0 pl-1" headerClass="p-2">
@@ -173,11 +196,11 @@
             </template>
         </Column>
     </TreeTable>
-	<Dialog v-model:visible="isShowDialog"  :header="headerDialog" :style="{ width: '70vw' }">
+	<Dialog v-model:visible="dataDialog.isShow"  :header="dataDialog.headerText" :style="{ width: '70vw' }">
 	    <template #header>
-	    	<a :href="idDialog" target="_blank">{{ headerDialog }}</a>
+	    	<a :href="dataDialog.id" target="_blank">{{ dataDialog.headerText }}</a>
     	</template>
-        <TreeTable :value="dataDialog" class="itemDetails">
+        <TreeTable :value="dataDialog.data" class="itemDetails">
             <Column field="name" header="Field" expander></Column>
             <Column field="value" header="Value"></Column>
         </TreeTable>
