@@ -5,6 +5,7 @@ export interface IItem {
 	version: number
 	source: string
 	sourceKey: string
+	name: string
 	createdOn: Dayjs
 	updatedOn: Dayjs
 	status: string

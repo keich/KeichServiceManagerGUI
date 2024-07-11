@@ -14,6 +14,7 @@ interface inItem{
 	version: number
 	source: string
 	sourceKey: string
+	name: string
 	createdOn: string
 	updatedOn: string
 	deletedOn: string
@@ -30,6 +31,7 @@ function buildItem(item: inItem): IItem{
 		version: item.version,
 		source: item.source,
 		sourceKey: item.sourceKey,
+		name: item.name,
 		createdOn: dayjs(item.createdOn),
 		updatedOn: dayjs(item.updatedOn),
 		status: item.status,
@@ -71,13 +73,16 @@ function getItem(id: String): Promise<IItem> {
 	})
 }
 
-function findItemsByName(name: String): Promise<IItem[]> {
+function findItemsByName(name: String, parametrs: string[]): Promise<IItem[]> {
 	if(name == '' || name == null){
 		throw new Error('Search name is emty')
 	}
 
 	const queryParams = new URLSearchParams()
-	queryParams.append('fields.name', 'co:' + name)
+	queryParams.append('name', 'co:' + name)
+	parametrs.forEach(param => {
+		queryParams.append('property', param)
+	})
 	
 	return fetch(host + '/item?'+queryParams)
 	.then(response => {
@@ -91,8 +96,13 @@ function findItemsByName(name: String): Promise<IItem[]> {
 	})
 }
 
-function getItemTree(id: String): Promise<IItemTree> {
-	return fetch(host + '/item/' + id + "/tree")
+function getItemTree(id: String, parametrs: string[]): Promise<IItemTree> {
+	const queryParams = new URLSearchParams()
+	parametrs.forEach(param => {
+		queryParams.append('property', param)
+	})
+	
+	return fetch(host + '/item/' + id + "/tree?" + queryParams)
 	.then(response => {
 		if(!response.ok){
 			throw new Error('HTTP status ' + response.status)

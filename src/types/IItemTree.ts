@@ -5,6 +5,7 @@ export interface IItemTree {
 	version: number
 	source: string
 	sourceKey: string
+	name: string
 	createdOn: string | Dayjs
 	updatedOn: string | Dayjs
 	deletedOn: string | Dayjs
