@@ -29,9 +29,15 @@
 	
 	const loading = ref(false)
 	
-	const isShowDialog = ref(false)
-	const headerDialog = ref<string>()
-	const dataDialog = ref<TreeNode[]>()
+	interface IDialogData {
+		loading: boolean
+		isShow: boolean
+		headerText: string
+		id: string
+		data: TreeNode[]
+	}
+	
+	const dataDialog = ref<IDialogData>({loading: false, isShow: false, headerText: '', id: '', data: []})
 	
 	interface ICounter {
     	clear: number,
@@ -61,8 +67,8 @@
 	const columns  = ref([
 		{ field: 'data.status', filterField:'data.status', header: 'Status', class: "white-space-normal p-1 w-1 pl-2"},
 		{ field: 'data.toNow', header: 'To Now' , class: "white-space-normal p-1 w-2 pl-2"},
-		{ field: 'data.fields.node', header: 'Node', class: "white-space-normal p-1 w-3 pl-2"},
-		{ field: 'data.fields.summary', header: 'Summary' , class: "white-space-normal p-1 w-4  pl-2"}
+		{ field: 'data.node', header: 'Node', class: "white-space-normal p-1 w-3 pl-2"},
+		{ field: 'data.summary', header: 'Summary' , class: "white-space-normal p-1 w-4  pl-2"}
 	])
 	
 
@@ -80,7 +86,7 @@
 			return
 		}
 		loading.value = true
-		const t = ItemRepository.getEvents(id)
+		const t = ItemRepository.getEvents(id, ['id', 'status', 'node', 'summary','createdOn'])
 		.then(arr => {
 			events.value = arr.map(event => eventToNode(event) )
 				.sort((a, b) => {
@@ -88,7 +94,7 @@
 					if(intDiff === 0) {
 						const intDiffByTime = b.data.createdOn.diff(a.data.createdOn)
 						if(intDiffByTime === 0) {
-							return (''+a.data.fields.node).localeCompare(b.data.fields.node)
+							return (''+a.data.node).localeCompare(b.data.node)
 						}
 						return intDiffByTime
 					}
@@ -142,19 +148,29 @@
 	})
 	
 	function onNodeSelect(node: TreeNode) {
-	    if(isShowDialog){
-	    	if(node.key){
-		    	headerDialog.value = ""+node.key
-	    	} else {
-	    		headerDialog.value = ""
-	    	}
-
-	    	dataDialog.value = objectToNode(node.data)
+		dataDialog.value.id = node.data.id
+	    if(dataDialog.value.isShow){
+	    	showDialog()
 	    }
 	}
 
+	function showDialog() {
+		if(dataDialog.value.id != '' && dataDialog.value.id != null){
+			ItemRepository.getEvent(dataDialog.value.id)
+			.then(event => {
+				dataDialog.value.headerText = event.id
+				dataDialog.value.data = objectToNode(event)
+			})
+			.catch(error => { 
+				console.log("Error ",error)
+				toast.add({ severity: 'error', summary: 'Error', detail: 'API event/get: ' + error, life: 30000 })
+			})
+		}
+		dataDialog.value.isShow = true
+	}
+	
 	function onRowDblClick() {
-		isShowDialog.value = true
+		showDialog()
 	}
 	
 	function onFilterGlobal(event: any){
@@ -211,8 +227,8 @@
 	    </Column>
 	</DataTable>
 
-	<Dialog v-model:visible="isShowDialog"  :header="headerDialog" :style="{ width: '70vw' }">
-        <TreeTable :value="dataDialog" class="eventDetails">
+	<Dialog v-model:visible="dataDialog.isShow"  :header="dataDialog.headerText" :style="{ width: '70vw' }">
+        <TreeTable :value="dataDialog.data" class="itemDetails">
             <Column field="name" header="Field" expander></Column>
             <Column field="value" header="Value"></Column>
         </TreeTable>

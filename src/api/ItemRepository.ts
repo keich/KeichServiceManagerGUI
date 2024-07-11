@@ -26,6 +26,10 @@ interface inItem{
 }
 
 function buildItem(item: inItem): IItem{
+	let deletedOn
+	if(item.deletedOn != null){
+			deletedOn = dayjs(item.deletedOn)
+	}
 	return {
 		id: item.id,
 		version: item.version,
@@ -34,6 +38,7 @@ function buildItem(item: inItem): IItem{
 		name: item.name,
 		createdOn: dayjs(item.createdOn),
 		updatedOn: dayjs(item.updatedOn),
+		deletedOn: deletedOn,
 		status: item.status,
 		intStatus: getIntByStatus(item.status),
 		fields: item.fields,
@@ -42,7 +47,6 @@ function buildItem(item: inItem): IItem{
 		hasChildren: item.hasChildren
 	}
 }
-
 
 function getChildren(id: String): Promise<IItem[]> {
 	return fetch(host + '/item/' + id + '/children')
@@ -68,9 +72,7 @@ function getItem(id: String): Promise<IItem> {
 		}
 		return response.json()
 	})
-	.then(item => {
-		return buildItem(item)
-	})
+	.then(item => buildItem(item))
 }
 
 function findItemsByName(name: String, parametrs: string[]): Promise<IItem[]> {
@@ -96,6 +98,18 @@ function findItemsByName(name: String, parametrs: string[]): Promise<IItem[]> {
 	})
 }
 
+function getEvent(id: String): Promise<IEvent> {
+	return fetch(host + '/event/' + id)
+	.then(response => {
+		if(!response.ok){
+			throw new Error('HTTP status ' + response.status)
+		}
+		return response.json()
+	})
+	.then(event => buildEvent(event))
+}
+
+
 function getItemTree(id: String, parametrs: string[]): Promise<IItemTree> {
 	const queryParams = new URLSearchParams()
 	parametrs.forEach(param => {
@@ -119,6 +133,8 @@ interface inEvent {
 	version: number
 	source: string
 	sourceKey: string
+	node: string
+	summary: string
 	createdOn: string
 	updatedOn: string
 	deletedOn: string
@@ -127,8 +143,37 @@ interface inEvent {
 	fromHistory: string[]
 }
 
-function getEvents(id: String): Promise<IEvent[]> {
-	return fetch(host + '/item/' + id + '/events')
+function buildEvent(event: inEvent): IEvent{
+	const created = dayjs(event.createdOn)
+	let deletedOn
+	if(event.deletedOn != null){
+			deletedOn = dayjs(event.deletedOn)
+	}
+	return {
+		id: event.id,
+		version: event.version,
+		source: event.source,
+		sourceKey: event.sourceKey,
+		node: event.node,
+		summary: event.summary,
+		createdOn: created,
+		updatedOn: dayjs(event.updatedOn),
+		deletedOn: deletedOn,
+		status: event.status,
+		intStatus: getIntByStatus(event.status),
+		fields: event.fields,
+		toNow: created.fromNow(),
+		fromHistory: event.fromHistory
+	}
+}
+
+function getEvents(id: String, parametrs: string[]): Promise<IEvent[]> {
+	const queryParams = new URLSearchParams()
+	parametrs.forEach(param => {
+		queryParams.append('property', param)
+	})
+	
+	return fetch(host + '/item/' + id + '/events?' + queryParams)
 	.then(response => {
 		if(!response.ok){
 			throw new Error(response.statusText)
@@ -139,26 +184,11 @@ function getEvents(id: String): Promise<IEvent[]> {
 		return json as inEvent[];
 	})
 	.then(events => {
-		return events.map( event => {
-			const created = dayjs(event.createdOn)
-			return {
-				id: event.id,
-				version: event.version,
-				source: event.source,
-				sourceKey: event.sourceKey,
-				createdOn: created,
-				updatedOn: dayjs(event.updatedOn),
-				status: event.status,
-				intStatus: getIntByStatus(event.status),
-				fields: event.fields,
-				toNow: created.fromNow(),
-				fromHistory: event.fromHistory
-			}
-		})
+		return events.map( event => buildEvent(event))
 	})
 	
 }
 	
 export default {
-	getChildren, getItem, getItemTree, getEvents, findItemsByName
+	getChildren, getItem, getItemTree, getEvents, findItemsByName, getEvent
 }

@@ -8,6 +8,7 @@ export interface IItem {
 	name: string
 	createdOn: Dayjs
 	updatedOn: Dayjs
+	deletedOn: Dayjs  | undefined
 	status: string
 	fields: Record<string, string>
 	rules: Record<string, string>

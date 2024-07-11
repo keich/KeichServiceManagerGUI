@@ -39,10 +39,6 @@
 	const dataTree = ref<TreeNode[]>([])
 	const loading = ref(true)
 	const dataDialog = ref<IDialogData>({loading: false, isShow: false, headerText: '', id: '', data: []})
-	/*const isShowDialog = ref(false)
-	const headerDialog = ref<string>()
-	const idDialog = ref<string>('')
-	const dataDialog = ref<TreeNode[]>()*/
 	const selectedKey = ref<TreeTableSelectionKeys | undefined>(undefined)
 	const filters = ref({global: ''})
 	
