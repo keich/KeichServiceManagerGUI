@@ -128,6 +128,24 @@ function getItemTree(id: String, parametrs: string[]): Promise<IItemTree> {
 	})
 }
 
+function getParentsTree(id: String, parametrs: string[]): Promise<IItemTree> {
+	const queryParams = new URLSearchParams()
+	parametrs.forEach(param => {
+		queryParams.append('property', param)
+	})
+	
+	return fetch(host + '/item/' + id + "/parents/tree?" + queryParams)
+	.then(response => {
+		if(!response.ok){
+			throw new Error('HTTP status ' + response.status)
+		}
+		return response.json()
+	})
+	.then(item => {
+		return item
+	})
+}
+
 interface inEvent {
 	id: string
 	version: number
@@ -190,5 +208,5 @@ function getEvents(id: String, parametrs: string[]): Promise<IEvent[]> {
 }
 	
 export default {
-	getChildren, getItem, getItemTree, getEvents, findItemsByName, getEvent
+	getChildren, getItem, getItemTree, getEvents, findItemsByName, getEvent, getParentsTree
 }

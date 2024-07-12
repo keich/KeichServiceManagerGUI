@@ -16,4 +16,5 @@ export interface IItemTree {
 	intStatus: number
 	hasChildren: boolean
 	children: IItemTree[]
+	parents: IItemTree[]
 }

@@ -17,6 +17,7 @@
 	import InputText from 'primevue/inputtext'
 	import IconField from 'primevue/iconfield'
 	import Button from 'primevue/button'
+	import ToggleButton from 'primevue/togglebutton';
 	
 	const toast = useToast()
 	
@@ -41,6 +42,7 @@
 	const dataDialog = ref<IDialogData>({loading: false, isShow: false, headerText: '', id: '', data: []})
 	const selectedKey = ref<TreeTableSelectionKeys | undefined>(undefined)
 	const filters = ref({global: ''})
+	const isShowParents = ref(false)
 	
 	let refreshEventsInterval: number
 	let searchTimer: number | undefined = undefined
@@ -59,6 +61,15 @@
 		if(item.deletedOn != null){
 			item.deletedOn = dayjs(item.deletedOn)
 		}
+		
+		if(!item.children){
+			item.children = []
+		}
+		
+		if(item.parents && item.parents.length > 0){
+			item.children = item.parents;
+		}
+
 		const children = item.children
 		.map((child) => itemToNode(child))
 		.sort((a, b) => {
@@ -84,7 +95,13 @@
 	
 	function loadRootTree() {
 		loading.value = true
-		const prom = rootIds.value.map((id) => ItemRepository.getItemTree(id, ['id', 'name','status']))
+		let prom = []
+		if(isShowParents.value) {
+			prom = rootIds.value.map((id) => ItemRepository.getParentsTree(id, ['id', 'name','status']))	
+		} else {
+			prom = rootIds.value.map((id) => ItemRepository.getItemTree(id, ['id', 'name','status']))	
+		}
+
 		
 		Promise.all(prom)
 		.then((values) => {
@@ -167,6 +184,10 @@
 	    	loadRootItem()
 	    }, 800)
 	}
+	
+	function onToggleChange(){
+		loadRootItem()
+	}
 </script>
 
 <template>
@@ -174,7 +195,9 @@
     <TreeTable v-model:selectionKeys="selectedKey" :value="dataTree" selectionMode="single" @nodeSelect="onNodeSelect"  @dblclick="onRowDblClick" :loading="loading" >
         <template #header>
         	<div class="align-items-center flex justify-content-between p-0 m-0">
-        	 	<div></div>
+        	 	<div class="children-parents-button">
+        	 		<ToggleButton v-model="isShowParents" onLabel="Parents" offLabel="Children" @change="onToggleChange"/>
+        	 	</div>
             	<div class="flex m-1" >
                 	<i class="pi pi-search m-2"></i>
                 	<InputText @input="onFilterGlobal" placeholder="Global Search" class="p-1"/>
@@ -212,6 +235,10 @@
 
 .itemDetails .p-treetable-tbody > tr > td  {
     padding: 0 0;
+}
+
+.children-parents-button .p-button {
+    padding: 0.15rem 0.5rem;
 }
 
 
