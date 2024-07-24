@@ -22,6 +22,8 @@
 		}
 	})
 	
+	interface IInterval { timer: number; origNode: TreeNode; }
+	
 	const dataTree = ref<TreeNode[]>([])
 	const loading = ref(true)
 	const isShowDialog = ref(false)
@@ -29,7 +31,7 @@
 	const dataDialog = ref<TreeNode[]>()
 	const selectedKey = ref<TreeTableSelectionKeys | undefined>(undefined);
 	
-	const intervals: Record<string, TreeNode> = {}
+	const intervals: Record<string, IInterval> = {}
 	
 	const emit = defineEmits(['itemSelectedId'])
 	
@@ -125,7 +127,7 @@
 	})
 	
 	onBeforeUnmount(() => {
-		clearTimer(dataTree)
+		dataTree.value.forEach(node => clearTimer(node))
 		dataTree.value = []
 	})
 
