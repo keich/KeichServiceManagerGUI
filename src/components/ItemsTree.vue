@@ -180,7 +180,7 @@
 	    }
 	    searchTimer = setTimeout(() => {
 	    	emit('itemSelectedId', '')
-	    	searchKey = event.target.value.trim()
+	    	searchKey = event.target.value.trim().toUpperCase()
 	    	loadRootItem()
 	    }, 800)
 	}
