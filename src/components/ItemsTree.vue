@@ -11,7 +11,6 @@
 	import InlineMessage from 'primevue/inlinemessage'
 	import StatusIcon from '@/components/StatusIcon.vue'
 	import { objectToNode, getIntByStatus } from '@/common/func.ts'
-	import dayjs from "dayjs";
 	import type { IItemTree } from "@/types/IItemTree";
 	import InputIcon from 'primevue/inputicon'
 	import InputText from 'primevue/inputtext'
@@ -52,15 +51,6 @@
 	
 	function itemToNode(item: IItemTree): TreeNode {
 		item.intStatus = getIntByStatus(item.status)
-		if(item.createdOn != null){
-			item.createdOn = dayjs(item.createdOn)
-		}
-		if(item.updatedOn != null){
-			item.updatedOn = dayjs(item.updatedOn)
-		}
-		if(item.deletedOn != null){
-			item.deletedOn = dayjs(item.deletedOn)
-		}
 		
 		if(!item.children){
 			item.children = []
@@ -102,7 +92,6 @@
 			prom = rootIds.value.map((id) => ItemRepository.getItemTree(id, ['id', 'name','status']))	
 		}
 
-		
 		Promise.all(prom)
 		.then((values) => {
   			dataTree.value = values.map(item => itemToNode(item))
