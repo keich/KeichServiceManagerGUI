@@ -1,5 +1,14 @@
 import type { TreeNode }  from 'primevue/treenode'
 import dayjs from "dayjs";
+import { isDayjs }  from "dayjs";
+import type { Dayjs }  from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const localtz = dayjs.tz.guess();
 	
 function getCSSColorByStatus(status: string): string {
     switch(status){
@@ -41,8 +50,8 @@ function objectToNode(obj: object): TreeNode[] {
 	}
     const out = [];
     for(const [field, value] of Object.entries(obj)){
-		if(value instanceof dayjs){
-			out.push({key:field, data: {name: field, value: value.toString()}});
+		if(isDayjs(value)){
+			out.push({key:field, data: {name: field, value: (value as Dayjs).tz(localtz).format('DD.MM.YYYY HH:mm:ss Z')}});
 		} else if(typeof value === 'object'){
 			if(value == null){
 				out.push({key:field, data: {name: field, value: "NULL"}, children: []});
