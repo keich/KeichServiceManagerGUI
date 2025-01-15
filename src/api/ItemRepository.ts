@@ -156,6 +156,7 @@ interface inEvent {
 	createdOn: string
 	updatedOn: string
 	deletedOn: string
+	endsOn: string
 	status: string
 	fields: Record<string, string>
 	fromHistory: string[]
@@ -167,6 +168,10 @@ function buildEvent(event: inEvent): IEvent{
 	if(event.deletedOn != null){
 			deletedOn = dayjs(event.deletedOn)
 	}
+	let endsOn
+	if(event.endsOn != null){
+			endsOn = dayjs(event.endsOn)
+	}
 	return {
 		id: event.id,
 		version: event.version,
@@ -177,6 +182,7 @@ function buildEvent(event: inEvent): IEvent{
 		createdOn: created,
 		updatedOn: dayjs(event.updatedOn),
 		deletedOn: deletedOn,
+		endsOn: endsOn,
 		status: event.status,
 		intStatus: getIntByStatus(event.status),
 		fields: event.fields,

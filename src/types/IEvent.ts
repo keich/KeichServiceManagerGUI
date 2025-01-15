@@ -10,6 +10,7 @@ export interface IEvent {
 	createdOn: Dayjs
 	updatedOn: Dayjs
 	deletedOn: Dayjs | undefined
+	endsOn: Dayjs | undefined
 	status: string
 	fields: Record<string, string>
 	intStatus: number,
