@@ -17,6 +17,10 @@
 	import { getCSSColorByStatus, objectToNode } from '@/common/func.ts'
 	import Toast from 'primevue/toast'
 	import { FilterMatchMode } from 'primevue/api'
+	import IconZabbix from './icons/IconZabbix.vue'
+	import IconVictoriaMetric from "./icons/IconVictoriaMetrics.vue"
+	import IconOracle from "./icons/IconOracle.vue"
+	import IconSAP from "./icons/IconSAP.vue"
 	
 	const toast = useToast()
 	
@@ -66,6 +70,7 @@
 	
 	const columns  = ref([
 		{ field: 'data.status', filterField:'data.status', header: 'Status', class: "white-space-normal p-1 w-1 pl-2"},
+		{ field: 'data.sourceType', header: 'Icon' , class: "white-space-normal p-1 w-1  pl-2"},
 		{ field: 'data.toNow', header: 'To Now' , class: "white-space-normal p-1 w-2 pl-2"},
 		{ field: 'data.node', header: 'Node', class: "white-space-normal p-1 w-3 pl-2"},
 		{ field: 'data.summary', header: 'Summary' , class: "white-space-normal p-1 w-4  pl-2"}
@@ -86,7 +91,7 @@
 			return
 		}
 		loading.value = true
-		const t = ItemRepository.getEvents(id, ['id', 'status', 'node', 'summary','createdOn'])
+		const t = ItemRepository.getEvents(id, ['id', 'sourceType', 'status', 'node', 'summary','createdOn'])
 		.then(arr => {
 			events.value = arr.map(event => eventToNode(event) )
 				.sort((a, b) => {
@@ -223,6 +228,12 @@
 		<Column v-for="col of columns"  :key="col.field" :field="col.field" :header="col.header" :class="col.class" headerClass="p-2" style="word-wrap: break-word">
 			<template  v-if="col.field == 'data.status'" #body="slotProps">
 				<StatusIcon class="w-2rem" :status="slotProps.data.data.status" />
+			</template>
+			<template  v-if="col.field == 'data.sourceType'" #body="slotProps">
+				<IconZabbix v-if="'ZABBIX' == slotProps.data.data.sourceType" class="w-4rem"></IconZabbix>
+				<IconSAP v-if="'SAP' == slotProps.data.data.sourceType" class="w-4rem"></IconSAP>
+				<IconOracle v-else-if="'ORACLE' == slotProps.data.data.sourceType" class="w-4rem"></IconOracle>
+				<IconVictoriaMetric v-else-if="'VICTORIAMETRICS' == slotProps.data.data.sourceType" class="w-4rem"></IconVictoriaMetric>
 			</template>
 	    </Column>
 	</DataTable>

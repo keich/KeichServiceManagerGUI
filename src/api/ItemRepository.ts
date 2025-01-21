@@ -14,6 +14,7 @@ interface inItem{
 	version: number
 	source: string
 	sourceKey: string
+	sourceType: string
 	name: string
 	createdOn: string
 	updatedOn: string
@@ -35,6 +36,7 @@ function buildItem(item: inItem): IItem{
 		version: item.version,
 		source: item.source,
 		sourceKey: item.sourceKey,
+		sourceType: item.sourceType,
 		name: item.name,
 		createdOn: dayjs(item.createdOn),
 		updatedOn: dayjs(item.updatedOn),
@@ -151,6 +153,7 @@ interface inEvent {
 	version: number
 	source: string
 	sourceKey: string
+	sourceType: string
 	node: string
 	summary: string
 	createdOn: string
@@ -177,6 +180,7 @@ function buildEvent(event: inEvent): IEvent{
 		version: event.version,
 		source: event.source,
 		sourceKey: event.sourceKey,
+		sourceType: event.sourceType,
 		node: event.node,
 		summary: event.summary,
 		createdOn: created,

@@ -5,6 +5,7 @@ export interface IEvent {
 	version: number
 	source: string
 	sourceKey: string
+	sourceType: string
 	node: string
 	summary: string
 	createdOn: Dayjs
