@@ -1,6 +1,6 @@
 
 <template>
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg  version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 406.3 106.4" style="enable-background:new 0 0 406.3 106.4;" xml:space="preserve">
 <rect class="zabbix_icon_st0" width="406.3" height="106.4"/>
 <polygon class="zabbix_icon_st1" points="17.4,16.2 76.2,16.2 76.2,23.9 28.9,81.8 77.3,81.8 77.3,90.2 16.3,90.2 16.3,82.6 63.6,24.7 

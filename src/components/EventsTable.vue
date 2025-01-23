@@ -230,10 +230,10 @@
 				<StatusIcon class="w-2rem" :status="slotProps.data.data.status" />
 			</template>
 			<template  v-if="col.field == 'data.sourceType'" #body="slotProps">
-				<IconZabbix v-if="'ZABBIX' == slotProps.data.data.sourceType" class="w-4rem"></IconZabbix>
-				<IconSAP v-if="'SAP' == slotProps.data.data.sourceType" class="w-4rem"></IconSAP>
-				<IconOracle v-else-if="'ORACLE' == slotProps.data.data.sourceType" class="w-4rem"></IconOracle>
-				<IconVictoriaMetric v-else-if="'VICTORIAMETRICS' == slotProps.data.data.sourceType" class="w-4rem"></IconVictoriaMetric>
+				<IconZabbix v-if="'ZABBIX' == slotProps.data.data.sourceType" class="opacity-50 w-3rem" ></IconZabbix>
+				<IconSAP v-if="'SAP' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconSAP>
+				<IconOracle v-else-if="'ORACLE' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconOracle>
+				<IconVictoriaMetric v-else-if="'VICTORIAMETRICS' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconVictoriaMetric>
 			</template>
 	    </Column>
 	</DataTable>
