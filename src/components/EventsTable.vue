@@ -26,7 +26,7 @@
 	
 	
 	const props = defineProps({
-	    id: {type: String, required: true },
+		id: {type: String, required: true },
 	})
 	
 	const events = ref<TreeNode[]>([])
@@ -44,13 +44,13 @@
 	const dataDialog = ref<IDialogData>({loading: false, isShow: false, headerText: '', id: '', data: []})
 	
 	interface ICounter {
-    	clear: number,
-    	indeterminate: number,
-    	info: number,
-    	warning: number,
-    	major: number,
-    	critical: number,
-    	all: number
+		clear: number,
+		indeterminate: number,
+		info: number,
+		warning: number,
+		major: number,
+		critical: number,
+		all: number
 	} 
 	
 	function getClearCounters() {
@@ -64,7 +64,7 @@
 	let searchTimer: number | undefined = undefined
 
 	const filters = ref({
-	    global: { value: '', matchMode: FilterMatchMode.CONTAINS },
+		global: { value: '', matchMode: FilterMatchMode.CONTAINS },
 		'data.status': { value: '', matchMode: FilterMatchMode.CONTAINS }
 	})
 	
@@ -154,9 +154,9 @@
 	
 	function onNodeSelect(node: TreeNode) {
 		dataDialog.value.id = node.data.id
-	    if(dataDialog.value.isShow){
-	    	showDialog()
-	    }
+		if(dataDialog.value.isShow){
+			showDialog()
+		}
 	}
 
 	function showDialog() {
@@ -179,13 +179,13 @@
 	}
 	
 	function onFilterGlobal(event: any){
-	    if (searchTimer){
-	        clearTimeout(searchTimer)
-	        searchTimer = undefined
-	    }
-	    searchTimer = setTimeout(() => {
-	    	filters.value['global'].value = event.target.value.trim()
-	    }, 800)
+		if (searchTimer){
+			clearTimeout(searchTimer)
+			searchTimer = undefined
+		}
+		searchTimer = setTimeout(() => {
+			filters.value['global'].value = event.target.value.trim()
+		}, 800)
 	}
 	
 	function onClickFilterStatus(val: string ) {
@@ -198,21 +198,21 @@
 	
 	const buttons = computed(() => {
 		return [
-		    { show: counters.value.clear > 0, status: 'CLEAR', value: 'CLEAR', text: 'Clear(' + counters.value.clear + ')' },
-		    { show: counters.value.indeterminate > 0, status: 'INDETERMINATE', value: 'INDETERMINATE', text: 'Indeterminate(' + counters.value.indeterminate + ')' },
-		    { show: counters.value.info > 0, status: 'INFORMATION', value: 'INFORMATION', text: 'Info(' + counters.value.info + ')' },
-		    { show: counters.value.warning > 0, status: 'WARNING', value: 'WARNING', text: 'Warning(' + counters.value.warning + ')' },
-		    { show: counters.value.major > 0, status: 'MAJOR', value: 'MAJOR', text: 'Major(' + counters.value.major + ')' },
-		    { show: counters.value.critical > 0, status: 'CRITICAL', value: 'CRITICAL', text: 'Critical(' + counters.value.critical + ')' },
-		    { show: true, status: 'GRAY', value: '', text: 'All events(' + counters.value.all + ')'  } ]
+			{ show: counters.value.clear > 0, status: 'CLEAR', value: 'CLEAR', text: 'Clear(' + counters.value.clear + ')' },
+			{ show: counters.value.indeterminate > 0, status: 'INDETERMINATE', value: 'INDETERMINATE', text: 'Indeterminate(' + counters.value.indeterminate + ')' },
+			{ show: counters.value.info > 0, status: 'INFORMATION', value: 'INFORMATION', text: 'Info(' + counters.value.info + ')' },
+			{ show: counters.value.warning > 0, status: 'WARNING', value: 'WARNING', text: 'Warning(' + counters.value.warning + ')' },
+			{ show: counters.value.major > 0, status: 'MAJOR', value: 'MAJOR', text: 'Major(' + counters.value.major + ')' },
+			{ show: counters.value.critical > 0, status: 'CRITICAL', value: 'CRITICAL', text: 'Critical(' + counters.value.critical + ')' },
+			{ show: true, status: 'GRAY', value: '', text: 'All events(' + counters.value.all + ')'  } ]
 	})
 </script>
 
 <template>
-    <Toast />
+	<Toast />
   	<DataTable class="flex flex-column h-full overflow-hidden" paginator :rows="50" :rowsPerPageOptions="[50, 100, 1000]" 
-  	    :value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" 
-  	    :metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" v-model:filters="filters" >
+  		:value="events" :loading="loading" removableSort @dblclick="onRowDblClick"  @update:selection="onNodeSelect" 
+  		:metaKeySelection="false" selectionMode="single" tableStyle="min-width: 50rem" dataKey="key" v-model:filters="filters" >
 		<template #header>
 			<div class="align-items-center flex justify-content-between p-0 m-0">
 				<div class="flex">
@@ -231,30 +231,30 @@
 			</template>
 			<template  v-if="col.field == 'data.sourceType'" #body="slotProps">
 				<IconZabbix v-if="'ZABBIX' == slotProps.data.data.sourceType" class="opacity-50 w-3rem" ></IconZabbix>
-				<IconSAP v-if="'SAP' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconSAP>
+				<IconSAP v-else-if="'SAP' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconSAP>
 				<IconOracle v-else-if="'ORACLE' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconOracle>
 				<IconVictoriaMetric v-else-if="'VICTORIAMETRICS' == slotProps.data.data.sourceType" class="opacity-50  w-3rem"></IconVictoriaMetric>
 			</template>
-	    </Column>
+		</Column>
 	</DataTable>
 
 	<Dialog v-model:visible="dataDialog.isShow"  :header="dataDialog.headerText" :style="{ width: '70vw' }">
-        <TreeTable :value="dataDialog.data" class="itemDetails">
-            <Column field="name" header="Field" expander></Column>
-            <Column field="value" header="Value"></Column>
-        </TreeTable>
-    </Dialog>
+		<TreeTable :value="dataDialog.data" class="itemDetails">
+			<Column field="name" header="Field" expander></Column>
+			<Column field="value" header="Value"></Column>
+		</TreeTable>
+	</Dialog>
 </template>
 
 <style lang="scss">
 
 .columnName {
-    white-space: initial;
-    display: inline;
+	white-space: initial;
+	display: inline;
 }
 
 .eventDetails .p-treetable-tbody > tr > td  {
-    padding: 0 0;
+	padding: 0 0;
 }
 
 .p-datatable-wrapper  {
