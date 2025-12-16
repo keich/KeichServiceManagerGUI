@@ -83,7 +83,7 @@ function findItemsByName(name: String, parametrs: string[]): Promise<IItem[]> {
 	}
 
 	const queryParams = new URLSearchParams()
-	queryParams.append('name', 'co:' + name)
+	queryParams.append('search', '"name" =* "' + name + '"')
 	parametrs.forEach(param => {
 		queryParams.append('property', param)
 	})
