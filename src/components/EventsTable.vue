@@ -73,7 +73,7 @@
 		{ field: 'data.sourceType', header: 'Icon' , class: "white-space-normal p-1 w-1  pl-2"},
 		{ field: 'data.toNow', header: 'To Now' , class: "white-space-normal p-1 w-2 pl-2"},
 		{ field: 'data.node', header: 'Node', class: "white-space-normal p-1 w-3 pl-2"},
-		{ field: 'data.summary', header: 'Summary' , class: "white-space-normal p-1 w-4  pl-2"}
+		{ field: 'data.summary', header: 'Summary' , class: "p-1 w-4  pl-2 eventsTableSummary"}
 	])
 	
 
@@ -139,7 +139,8 @@
 	}
 	
 	onMounted(() => {
-		refreshEventsInterval = setInterval(() => loadEvents(props.id), 60000)
+		//refreshEventsInterval = setInterval(() => loadEvents(props.id), 60000)
+		loadEvents(props.id)
 	})
 	
 	onBeforeUnmount(() => {
@@ -259,6 +260,13 @@
 
 .p-datatable-wrapper  {
 	height: 100vh;
+}
+
+.eventsTableSummary {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+	max-width: 100px;
 }
 
 </style>
